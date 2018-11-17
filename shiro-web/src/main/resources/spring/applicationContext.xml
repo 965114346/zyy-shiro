@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl" value="login.html"/>
+        <property name="unauthorizedUrl" value="login.html"/>
+        <property name="successUrl" value="admin/index"/>
+        <property name="filterChainDefinitions">
+            <value>
+                /login = anon
+                /* = authc
+            </value>
+        </property>
+    </bean>
+
+    <!-- shiro 安全管理器 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="realm"/>
+    </bean>
+
+    <!-- 数据源 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://111.230.48.104:33306/website"/>
+        <property name="username" value="root"/>
+        <property name="password" value="232511"/>
+    </bean>
+
+    <!-- 自定义Realm -->
+    <bean id="realm" class="com.zyy.realm.CustomRealm">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+</beans>
