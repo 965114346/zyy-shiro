@@ -38,20 +38,14 @@ public class CustomRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         String username = (String) authenticationToken.getPrincipal();
         String password = getPasswordByUsername(username);
-
-        /*if (Objects.isNull(password)) {
-            return null;
-        }*/
-        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(username, "46c08c54f42af6eb68b94d0743e8242d", getName());
-        info.setCredentialsSalt(ByteSource.Util.bytes("mark"));
-        return info;
+        return new SimpleAuthenticationInfo(username, password, getName());
 
     }
 
     private String getPasswordByUsername(String username) {
         try {
             Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement("select password from sys_user where username = ?");
+            PreparedStatement statement = connection.prepareStatement("select password from user where username = ?");
             statement.setString(1, username);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {

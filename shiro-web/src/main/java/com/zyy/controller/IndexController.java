@@ -3,6 +3,7 @@ package com.zyy.controller;
 import com.zyy.entity.User;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
@@ -19,26 +20,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class IndexController {
 
     @PostMapping("/login")
-    @ResponseBody
     public String login(User user) {
         Subject subject = SecurityUtils.getSubject();
-        if (StringUtils.isEmpty(user.getUsername())) {
-            return "用户名为空";
-        }
-        if (StringUtils.isEmpty(user.getPassword())) {
-            return "密码为空";
+        if (StringUtils.isEmpty(user.getUsername()) || StringUtils.isEmpty(user.getPassword())) {
+            return "login";
         }
         try {
             subject.login(new UsernamePasswordToken(user.getUsername(), user.getPassword()));
         } catch (AuthenticationException e) {
-            e.printStackTrace();
-            return e.getMessage();
+            return "403";
         }
-        return String.valueOf(subject.isAuthenticated());
+        return "index";
     }
 
     @GetMapping
     public String index() {
-        return "/login";
+        return "login";
     }
 }
